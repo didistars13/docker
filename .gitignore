@@ -1,0 +1,2 @@
+# Ignore VNC password files
+**/vnc-passwd
