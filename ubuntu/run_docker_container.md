@@ -1,4 +1,4 @@
-Run Docker Container with VNC# Run Docker Container with VNC
+# Run Docker Container with VNC# Run Docker Container with VNC
 
 ## 1. Generate VNC Password File
 We first set up a minimal container to **generate a VNC password file**.  
