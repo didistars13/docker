@@ -14,7 +14,7 @@ docker run --rm -it -v "${PWD}:/output" ubuntu:22.04 bash -c "\
 After running this command:
 - You’ll be prompted to enter a VNC password.
 - The password will be stored in the file `vnc-passwd` in your current directory.
-- Keep it safe — it will be used to connect to the VNC server running in the container.
+- Keep it safe - it will be used to connect to the VNC server running in the container.
 
 ---
 
@@ -42,8 +42,10 @@ RUN mkdir -p /root/.vnc && \
 
 EXPOSE 5901
 
-# Start VNC server when container runs
-CMD ["sh", "-c", "vncserver :1 -geometry 1280x800 -depth 24 && tail -F /root/.vnc/*.log"]
+# Start VNC server with defined resolution
+ENV VNC_GEOMETRY=1280x800
+
+CMD ["sh", "-c", "vncserver :1 -geometry ${VNC_GEOMETRY} -depth 24 && tail -F /root/.vnc/*.log"]
 EOF
 ```
 
@@ -60,6 +62,13 @@ docker build -t my-vnc-image .
 ```bash
 docker run -d -p 5901:5901 \
   -v ${PWD}/vnc-passwd:/root/.vnc/passwd \
+  --name my-vnc my-vnc-image
+```
+**NOTE:** If you want to rewrite `VNC_GEOMETRY` variable to scale your resolutoin run docker with `-e VNC_GEOMETRY=1920x1080` parameter:
+```bash
+docker run -d -p 5901:5901 \
+  -v ${PWD}/vnc-passwd:/root/.vnc/passwd \
+  -e VNC_GEOMETRY=1920x1080 \
   --name my-vnc my-vnc-image
 ```
 
