@@ -15,10 +15,13 @@ RUN mkdir -p /root/.vnc && \
     'autocutsel -fork &\n'\
     'startxfce4 &' > /root/.vnc/xstartup && \
     chmod +x /root/.vnc/xstartup
-RUN apt remove -y firefox snapd && \
+RUN apt purge -y firefox snapd && \
     apt update && \
-    apt install -y wget gnupg software-properties-common && \
+    apt install -y software-properties-common && \
     add-apt-repository -y ppa:mozillateam/ppa && \
+    echo 'Package: firefox*' > /etc/apt/preferences.d/mozillateamppa && \
+    echo 'Pin: release o=LP-PPA-mozillateam' >> /etc/apt/preferences.d/mozillateamppa && \
+    echo 'Pin-Priority: 1001' >> /etc/apt/preferences.d/mozillateamppa && \
     apt update && \
     apt install -y firefox && \
     apt clean

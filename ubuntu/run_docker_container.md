@@ -125,19 +125,35 @@ To install Firefox in Ubuntu without Snap:
 
 **Manual install inside container:**
 ```bash
-apt install -y wget gnupg software-properties-common && \
-    add-apt-repository -y ppa:mozillateam/ppa && \
-    apt update && \
-    apt install -y firefox && \
-    apt clean
+# Remove snap-based Firefox & snapd entirely
+apt purge -y firefox snapd
+
+# Add Mozilla PPA
+apt update
+apt install -y software-properties-common
+add-apt-repository -y ppa:mozillateam/ppa
+
+# Pin PPA so apt prefers it
+echo '
+Package: firefox*
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+' > /etc/apt/preferences.d/mozillateamppa
+
+# Install real Firefox
+apt update
+apt install -y firefox
 ```
 
 **Add to Dockerfile:**
 ```dockerfile
-RUN apt remove -y firefox snapd && \
+RUN apt purge -y firefox snapd && \
     apt update && \
-    apt install -y wget gnupg software-properties-common && \
+    apt install -y software-properties-common && \
     add-apt-repository -y ppa:mozillateam/ppa && \
+    echo 'Package: firefox*' > /etc/apt/preferences.d/mozillateamppa && \
+    echo 'Pin: release o=LP-PPA-mozillateam' >> /etc/apt/preferences.d/mozillateamppa && \
+    echo 'Pin-Priority: 1001' >> /etc/apt/preferences.d/mozillateamppa && \
     apt update && \
     apt install -y firefox && \
     apt clean
